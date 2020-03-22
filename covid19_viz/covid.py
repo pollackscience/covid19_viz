@@ -39,10 +39,10 @@ def covid_viewer(ds):
     covid viewer, start with MRE view backbone?
     '''
     opts.defaults(
-        opts.Curve(tools=['hover'])
+        opts.Curve(tools=['hover'], width=600)
     )
     logtog = pn.widgets.Toggle(name='Log (Y-axis)', button_type='default', value=False)
-    xlim=(np.datetime64('2020-02-15'), np.datetime64('2020-03-25'))
+    xlim=(np.datetime64('2020-02-10'), np.datetime64('2020-03-25'))
 
 
     hv_ds = hv.Dataset(ds, ['date', 'country'], ['confirmed', 'dead', 'recovered'])
@@ -52,7 +52,7 @@ def covid_viewer(ds):
         xlim=xlim, title='Confirmed')
     confirmed_log = hv_ds.to(hv.Curve, 'date', 'confirmed').overlay('country').opts(
         legend_position='top_left', shared_axes=False, logy=True,
-        ylim=(1, ds.confirmed.values.max()*1.5),
+        ylim=(1, ds.confirmed.values.max()*2),
         xlim=xlim, title='Confirmed (Log)')
 
     dead = hv_ds.to(hv.Curve, 'date', 'dead').overlay('country').opts(
@@ -61,7 +61,7 @@ def covid_viewer(ds):
         xlim=xlim, title='Dead')
     dead_log = hv_ds.to(hv.Curve, 'date', 'dead').overlay('country').opts(
         legend_position='top_left', shared_axes=False, logy=True,
-        ylim=(0.1, ds.dead.values.max()*1.5),
+        ylim=(0.1, ds.dead.values.max()*2),
         xlim=xlim, title='Dead (Log)')
 
     recovered = hv_ds.to(hv.Curve, 'date', 'recovered').overlay('country').opts(
@@ -70,12 +70,12 @@ def covid_viewer(ds):
         xlim=xlim, title='Recovered')
     recovered_log = hv_ds.to(hv.Curve, 'date', 'recovered').overlay('country').opts(
         legend_position='top_left', shared_axes=False, logy=True,
-        ylim=(0.1, ds.recovered.values.max()*1.5),
+        ylim=(0.1, ds.recovered.values.max()*2),
         xlim=xlim, title='Recovered (Log)')
 
     layout = (confirmed + confirmed_log + dead + dead_log + recovered + recovered_log).cols(2)
     layout.opts(
-        opts.Curve(width=600, height=250, framewise=True))
+        opts.Curve(width=400, height=250, framewise=True))
     # pn_layout = pn.pane.HoloViews(layout)
     # return pn.Row(logtog, pn_layout)
     return layout
