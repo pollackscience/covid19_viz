@@ -9,7 +9,7 @@ from holoviews import opts
 def load_and_clean_jhu_data(mode='Confirmed'):
     '''Simple function for grabbing the JHU covid data and converting it into pandas dfs
     Location data dropped, states aggregated into countries'''
-    csv_path = Path('data/COVID-19/csse_covid_19_data/csse_covid_19_time_series/')
+    csv_path = Path('local_data/')
     df = pd.concat([pd.read_csv(f) for f in csv_path.glob(f'*{mode}.csv')], ignore_index = True)
     df = df.drop(['Lat', 'Long'], axis=1)
     df = df.rename(columns={'Province/State':'state', 'Country/Region':'country'})
