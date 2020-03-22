@@ -39,7 +39,7 @@ def covid_viewer(ds):
     covid viewer, start with MRE view backbone?
     '''
     opts.defaults(
-        opts.Curve(tools=['hover'], width=600)
+        opts.Curve(tools=['hover'], width=600, ylabel='')
     )
     logtog = pn.widgets.Toggle(name='Log (Y-axis)', button_type='default', value=False)
     xlim=(np.datetime64('2020-02-10'), np.datetime64('2020-03-25'))
