@@ -4,6 +4,7 @@ import xarray as xr
 from pathlib import Path
 import holoviews as hv
 from holoviews import opts
+import panel as pn
 
 
 def load_and_clean_jhu_data(mode='Confirmed'):
@@ -37,13 +38,44 @@ def covid_viewer(ds):
     '''
     covid viewer, start with MRE view backbone?
     '''
+    opts.defaults(
+        opts.Curve(tools=['hover'])
+    )
+    logtog = pn.widgets.Toggle(name='Log (Y-axis)', button_type='default', value=False)
+    xlim=(np.datetime64('2020-02-15'), np.datetime64('2020-03-25'))
+
+
     hv_ds = hv.Dataset(ds, ['date', 'country'], ['confirmed', 'dead', 'recovered'])
-    layout = (hv_ds.to(hv.Curve, 'date',
-                       'confirmed').overlay('country').opts(legend_position='top_left') +
-              hv_ds.to(hv.Curve, 'date',
-                       'dead').overlay('country').opts(show_legend=False) +
-              hv_ds.to(hv.Curve, 'date',
-                       'recovered').overlay('country').opts(show_legend=False)).cols(1)
+    confirmed = hv_ds.to(hv.Curve, 'date', 'confirmed').overlay('country').opts(
+        legend_position='top_left', shared_axes=False,
+        ylim=(-ds.confirmed.values.max()*0.1, ds.confirmed.values.max()*1.1),
+        xlim=xlim, title='Confirmed')
+    confirmed_log = hv_ds.to(hv.Curve, 'date', 'confirmed').overlay('country').opts(
+        legend_position='top_left', shared_axes=False, logy=True,
+        ylim=(1, ds.confirmed.values.max()*1.5),
+        xlim=xlim, title='Confirmed (Log)')
+
+    dead = hv_ds.to(hv.Curve, 'date', 'dead').overlay('country').opts(
+        legend_position='top_left', shared_axes=False,
+        ylim=(-ds.dead.values.max()*0.1, ds.dead.values.max()*1.1),
+        xlim=xlim, title='Dead')
+    dead_log = hv_ds.to(hv.Curve, 'date', 'dead').overlay('country').opts(
+        legend_position='top_left', shared_axes=False, logy=True,
+        ylim=(0.1, ds.dead.values.max()*1.5),
+        xlim=xlim, title='Dead (Log)')
+
+    recovered = hv_ds.to(hv.Curve, 'date', 'recovered').overlay('country').opts(
+        legend_position='top_left', shared_axes=False,
+        ylim=(-ds.recovered.values.max()*0.1, ds.recovered.values.max()*1.1),
+        xlim=xlim, title='Recovered')
+    recovered_log = hv_ds.to(hv.Curve, 'date', 'recovered').overlay('country').opts(
+        legend_position='top_left', shared_axes=False, logy=True,
+        ylim=(0.1, ds.recovered.values.max()*1.5),
+        xlim=xlim, title='Recovered (Log)')
+
+    layout = (confirmed + confirmed_log + dead + dead_log + recovered + recovered_log).cols(2)
     layout.opts(
         opts.Curve(width=600, height=250, framewise=True))
+    # pn_layout = pn.pane.HoloViews(layout)
+    # return pn.Row(logtog, pn_layout)
     return layout
