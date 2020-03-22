@@ -22,7 +22,7 @@ VERSION = '0.1.1'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-     'pandas', 'bokeh<2.0', 'matplotlib', 'xarray', 'holoviews'
+     'pandas', 'bokeh<2.0', 'panel<=0.8.0', 'matplotlib', 'xarray', 'holoviews'
 ]
 
 # What packages are optional?
