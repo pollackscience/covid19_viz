@@ -29,8 +29,9 @@ def get_skimmed_data():
     csv_path = Path('local_data/')
     df_list = []
     # for mode in ['Confirmed']:
-    for mode in ['Confirmed', 'Deaths', 'Recovered']:
-        df = pd.concat([pd.read_csv(f) for f in csv_path.glob(f'*{mode}.csv')], ignore_index = True)
+    # for mode in ['Confirmed', 'Deaths', 'Recovered']:
+    for mode in ['confirmed', 'deaths']:
+        df = pd.concat([pd.read_csv(f) for f in csv_path.glob(f'*{mode}*.csv')], ignore_index = True)
         df = df.drop(['Lat', 'Long'], axis=1)
         df = df.rename(columns={'Province/State':'state', 'Country/Region':'country'})
         df.state = df.state.fillna('none').str.replace(' ', '_').str.lower()
@@ -54,8 +55,9 @@ def get_skimmed_data():
 
     ds = xr.Dataset({'confirmed': df_list[0],
                      'dead':df_list[1],
-                     'recovered':df_list[2],
-                     'active':df_list[0] - df_list[1] - df_list[2],
+                     # 'recovered':df_list[2],
+                     #'active':df_list[0] - df_list[1] - df_list[2],
+                     'active':df_list[0] - df_list[1],
                      'active_per_beds': (['date', 'place'],
                                          np.zeros(df_list[0].shape)),
                      'beds_per_1000': (['place'], np.ones(len(df_list[0].columns))),
